@@ -19,6 +19,8 @@ const UsernameQuerySchema = z.object({
       const result = UsernameQuerySchema.safeParse(queryParams);
   
       if (!result.success) {
+        console.log('in result');
+        
         const usernameErrors = result.error.format().username?._errors || [];
         return Response.json(
           {
@@ -31,7 +33,7 @@ const UsernameQuerySchema = z.object({
           { status: 400 }
         );
       }
-  console.log(result)
+  
       const { username } = result.data;
   
       const existingVerifiedUser = await UserModel.findOne({
@@ -52,7 +54,7 @@ const UsernameQuerySchema = z.object({
       return Response.json(
         {
           success: true,
-          message: 'Username is unique',
+          
         },
         { status: 200 }
       );

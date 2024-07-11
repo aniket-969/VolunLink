@@ -27,5 +27,7 @@ console.log(token);
     return NextResponse.redirect(new URL("/sign-in", request.url));
   }
 
+  
+
   return NextResponse.next();
 }

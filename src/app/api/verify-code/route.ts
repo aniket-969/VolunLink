@@ -18,6 +18,7 @@ export async function POST(request: Request) {
         username,
         code
     }
+   
     const validationResult = VerificationSchema.safeParse(data)
     if (!validationResult.success) {
         const errors = validationResult.error.errors.join(', ');
@@ -25,10 +26,10 @@ export async function POST(request: Request) {
             success: false,
             message: `Validation failed: ${errors}`
         }, { status: 400 });
-    }
+    } console.log(username,code)
     const decodedUsername = decodeURIComponent(username);
     const user = await UserModel.findOne({ username: decodedUsername });
-
+  console.log("This is user",user)
     if (!user) {
       return Response.json(
         { success: false, message: 'User not found' },
