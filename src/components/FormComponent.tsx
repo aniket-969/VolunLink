@@ -1,5 +1,5 @@
 'use client';
-import { useSession, signIn, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import * as z from "zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
@@ -18,6 +18,8 @@ import { MdKeyboardAlt } from "react-icons/md";
 import { FaCommentDots } from "react-icons/fa"
 import CustomInputWithIcon from './InputWithIcon';
 import { opportunityCategories, skills } from './../helpers/formConfig';
+import LocationDetails from "./Location";
+import { Location } from "@/models/Volunteer";
 
 interface FormComponentProps {
     formType: 'volunteer' | 'organization';
@@ -25,20 +27,68 @@ interface FormComponentProps {
 
 const FormComponent: React.FC<FormComponentProps> = ({ formType }) => {
 
+    const router = useRouter();
+    const [location, setLocation] = useState<Location | undefined>(undefined);
+
     const schema = formType === 'volunteer' ? skillFormSchema : opportunityCategoryFormSchema;
     type FormValues = z.infer<typeof schema>;
 
-    const { register, handleSubmit,setValue, formState: { errors } } = useForm<FormValues>({ resolver: zodResolver(schema) });
+    const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm<FormValues>({ resolver: zodResolver(schema) });
+    const [file, setFile] = useState<File | null>(null);
 
-    const onSubmit: SubmitHandler<FormValues> = data => {
+    const [isSubmitting, setIsSubmitting] = useState(false)
 
+    const onSubmit: SubmitHandler<FormValues> = async (data: FormValues) => {
+        setIsSubmitting(true)
         console.log(data);
+        try {
+            const formData = new FormData();
+            if (file != null) formData.append('file', file);
+console.log(file)
+            const imageResponse = await axios.post('/api/upload', formData);
+            console.log(imageResponse,imageResponse.data.results.url)
+            setFile(null)
+            setValue("images", imageResponse.data.results.url)
+           
+            if (formType === "volunteer") {
+                const response = await axios.post<ApiResponse>('/api/skills', data)
+
+                const skillId = response.data.data._id
+               
+                setValue("skills", skillId)
+
+                console.log(getValues("skills"))
+            }
+            else{
+                const response = await axios.post<ApiResponse>('/api/opportunity-category', data)
+
+            const categoryId = response.data.data._id
+            console.log(categoryId)
+            setValue("category", categoryId)
+
+            console.log(getValues("category"))
+            }
+             const requestData = {
+                ...data,
+                location,
+                role: formType === 'volunteer' ? 'Volunteer' : 'Organization',
+            };
+            console.log(requestData)
+            // toast.success("Post added successfully");
+            const response = await axios.post<ApiResponse>('/api/volunteer-form', requestData);
+            console.log(response)
+            // router.replace(`/`)
+            setIsSubmitting(false)
+        } catch (error) {
+            console.error("Error in adding post")
+            const axiosError = error as AxiosError<ApiResponse>;
+            let errorMessage = axiosError.response?.data.message ?? ('There was a problem with your post. Please try again.');
+            toast.error(errorMessage)
+            setIsSubmitting(false)
+        }
     };
 
-    const router = useRouter();
-    const [category, setCategory] = useState("");
-    const [skill, setSkills] = useState("");
-console.log(errors)
+    console.log(errors)
 
     const commonFields = (
         <>
@@ -52,7 +102,7 @@ console.log(errors)
                 <CustomInput
                     type="date"
                     className="bglight p-2"
-                    register={register("availableFrom")}  
+                    register={register("availableFrom")}
                 />
             </div>
 
@@ -63,13 +113,18 @@ console.log(errors)
                     type="date"
                     className="bglight p-2"
                     register={register("availableTill")}
-                   
+
                 />
             </div>
 
             <div>
                 <label>Choose images to upload </label>
-                <input type="file" />
+                <input type="file" onChange={(e) => {
+                    const selectedFile = e.target.files?.[0];
+                    if (selectedFile) {
+                        setFile(selectedFile);
+                    }
+                }} />
             </div>
         </>
     );
@@ -78,7 +133,7 @@ console.log(errors)
         <>
             {commonFields}
             <label htmlFor="skills" className="bg-light w-[60%]">Select skills:</label>
-            <select id="skills" className="w-[100%] px-3 py-2 bglight" onChange={(e) => setValue('skills',e.target.value)}>
+            <select id="skills" className="w-[100%] px-3 py-2 bglight" onChange={(e) => setValue('skillName', e.target.value)}>
                 {skills.map((optGroup, index) => (
                     <optgroup key={index} label={optGroup.label}>
                         {optGroup.options.map((option, index) => (
@@ -95,22 +150,23 @@ console.log(errors)
         <>
             {commonFields}
             <label htmlFor="skills" className="bg-light w-[60%]">Opportunity category:</label>
-            <select className='w-[100%] px-3 py-2 bglight' onChange={(e) => setValue('category',e.target.value)}>
-    {opportunityCategories.map((option, index) => (
-      <option key={index} value={option.value}>{option.label}</option>
-    ))}
-  </select>
+            <select className='w-[100%] px-3 py-2 bglight' onChange={(e) => setValue('categoryName', e.target.value)}>
+                {opportunityCategories.map((option, index) => (
+                    <option key={index} value={option.value}>{option.label}</option>
+                ))}
+            </select>
             <CustomInputWithIcon icon={FaWrench} register={register('categoryDescription')} isTextarea placeholder="Description" />
         </>
     );
 
     return (
         <>
-        <form onSubmit={handleSubmit(onSubmit)}>
-            {formType === 'volunteer' && volunteerFields}
-            {formType === 'organization' && organizationFields}
-            <button type="submit" className='bg-black text-white py-1' >Add Post</button>
-        </form>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                {formType === 'volunteer' && volunteerFields}
+                {formType === 'organization' && organizationFields}
+                <button type="submit" className='bg-black text-white py-1' disabled={isSubmitting}>Add Post</button>
+            </form>
+            <LocationDetails location={location} setLocation={setLocation}/>
         </>
     );
 };

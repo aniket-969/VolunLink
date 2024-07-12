@@ -11,13 +11,13 @@ export async function POST(request: Request) {
       
       const {
        categoryName,
-       description
+       categoryDescription
       } = body;
       
   
       const OpportunityCategoryData = new OpportunityCategoryModel({
         categoryName,
-        description
+        categoryDescription
       });
       console.log(OpportunityCategoryData);
       await OpportunityCategoryData.save();
@@ -26,6 +26,7 @@ export async function POST(request: Request) {
           JSON.stringify({
             success: true,
             message: "Opportunity category inserted successfully",
+            data:OpportunityCategoryData
           }),
           { status: 201, headers: { "Content-Type": "application/json" } }
         );

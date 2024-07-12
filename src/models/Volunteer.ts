@@ -1,14 +1,16 @@
 import mongoose, { Schema, Document, mongo } from "mongoose";
-import UserModel from "./User";
 
-interface Location {
+export interface Location {
   type: "Point";
+  latitude:number;
+  longitude:number;
   coordinates: [number, number];
   country?: string;
   county?: string;
   road?: string;
   state?: string;
   village?: string;
+  state_district?:string;
 }
 
 export interface VolunteerForm extends Document {
@@ -16,7 +18,7 @@ export interface VolunteerForm extends Document {
   title: string;
   description: string;
   location:Location;
-  images: string[];
+  images: string;
   contactEmail: string;
   contactPhone?: string;
   startDate?: Date;
@@ -58,14 +60,15 @@ const VolunteerFormSchema: Schema<VolunteerForm> = new mongoose.Schema(
       road: String,
       state: String,
       village: String,
+      state_district:String,
     },
 
-    images: [
+    images: 
       {
         type: String,
         required: true,
       },
-    ],
+    
     contactEmail: {
       type: String,
       required: true,

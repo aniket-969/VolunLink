@@ -5,11 +5,12 @@ export const skillFormSchema = z.object({
     description: z.string().min(10), 
     email: z.string().email({ message: 'Invalid email address' }), 
     phone: z.string().optional(),
-    skills: z.string().min(1), 
+    skillName: z.string().min(1), 
     skillDescription: z.string().min(10), 
     availableFrom: z.string().date().optional(), 
     availableTill: z.string().date().optional(), 
-    images: z.array(z.string()),
+    images: z.string().optional(),
+    skills:z.string().optional()
 })
 
 export const opportunityCategoryFormSchema = z.object({
@@ -17,9 +18,10 @@ export const opportunityCategoryFormSchema = z.object({
     description: z.string().min(10), 
     email: z.string().email({ message: 'Invalid email address' }), 
     phone: z.string(),
-    category:z.string().min(1),
+    categoryName:z.string().min(1),
     categoryDescription:z.string().min(10),
     availableFrom: z.string().date().optional(), 
     availableTill:z.string().date().optional(), 
-    images: z.array(z.string()),
+    images: z.string().optional(),
+    category:z.string().optional()
 })

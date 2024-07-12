@@ -3,7 +3,7 @@ import SkillsModel from "@/models/Skills";
 
 export async function POST(request: Request) {
     await dbConnect();
-  
+   
   const body = await request.json();
     
     console.log("This is upcoming field", body); 
@@ -11,13 +11,13 @@ export async function POST(request: Request) {
       
       const {
        skillName,
-       description
+       skillDescription
       } = body;
-      
+       
   
       const skillFormData = new SkillsModel({
         skillName,
-        description
+        skillDescription
       });
       console.log(skillFormData);
       await skillFormData.save();
@@ -26,6 +26,7 @@ export async function POST(request: Request) {
           JSON.stringify({
             success: true,
             message: "Skills inserted successfully",
+            data:skillFormData
           }),
           { status: 201, headers: { "Content-Type": "application/json" } }
         );

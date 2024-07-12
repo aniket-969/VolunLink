@@ -25,5 +25,5 @@ export async function POST(request: Request) {
     .end(buffer);
   });
   console.log(results)
-  return Response.json({ results });
+  return Response.json({ results});
 }

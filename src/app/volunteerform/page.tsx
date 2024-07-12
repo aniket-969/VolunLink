@@ -3,7 +3,7 @@ import FormComponent from "@/components/FormComponent"
 const page = () => {
   return (
     <div>
-        <FormComponent formType ='organization'/>
+        <FormComponent formType ='volunteer'/>
     </div>
   )
 }

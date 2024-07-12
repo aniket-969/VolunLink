@@ -7,51 +7,49 @@ import mongoose from "mongoose";
 
 export async function POST(request: Request) {
   await dbConnect();
-  //   const session = await getServerSession(authOptions);
-  //   const _user: User = session?.user;
+  const session = await getServerSession(authOptions);
+  const _user: User = session?.user;
 
-  //   if (!session || !_user) {
-  //     return Response.json(
-  //       { success: false, message: "Not authenticated" },
-  //       { status: 401 }
-  //     );
-  //   }
+  if (!session || !_user) {
+    return Response.json(
+      { success: false, message: "Not authenticated" },
+      { status: 401 }
+    );
+  }
   const body = await request.json();
-  //   const userId = new mongoose.Types.ObjectId(_user._id);
+  const userId = new mongoose.Types.ObjectId(_user._id);
   console.log("This is upcoming field", body);
   try {
     const {
       title,
-      latitude,
-      longitude,
       description,
-      contactEmail,
-      contactPhone,
-      startDate,
-      endDate,
+      email: contactEmail,
+      phone: contactPhone,
+      availableFrom: startDate,
+      availableTill: endDate,
       role,
-      country,
-      county,
-      road,
-      state,
-      village,
       skills,
       category,
-      createdBy,
       images,
+      location,
     } = body;
-
+    
+console.log("This is skill",skills)
     const volunteerFormData = new VolunteerFormModel({
       title,
       description,
       location: {
         type: "Point",
-        coordinates: [parseFloat(longitude), parseFloat(latitude)],
-        country,
-        county,
-        road,
-        state,
-        village,
+        coordinates: [
+          parseFloat(location.longitude),
+          parseFloat(location.latitude),
+        ],
+        country: location.country,
+        county: location.county,
+        road: location.road,
+        state: location.state,
+        village: location.village,
+        state_district: location.state_district,
       },
       contactEmail,
       contactPhone,
@@ -61,7 +59,7 @@ export async function POST(request: Request) {
       role,
       skills,
       category,
-      createdBy,
+      createdBy: userId,
     });
     console.log(volunteerFormData);
     await volunteerFormData.save();

@@ -2,7 +2,7 @@ import mongoose, { Schema, Document } from "mongoose";
 
 export interface OpportunityCategory extends Document {
   categoryName:string;
-  description:string;
+  categoryDescription:string;
 
 }
 
@@ -13,7 +13,7 @@ const OpportunityCategorySchema: Schema<OpportunityCategory> = new mongoose.Sche
       required: true,
       
     },
-    description: {
+    categoryDescription: {
       type: String,
       required: true,
     },

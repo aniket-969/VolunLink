@@ -2,10 +2,9 @@ import mongoose, { Schema, Document } from "mongoose";
 
 export interface Skills extends Document {
   skillName:string;
-  description:string;
+  skillDescription:string;
 
 }
-
 
 const SkillsSchema: Schema<Skills> = new mongoose.Schema(
   {
@@ -14,7 +13,7 @@ const SkillsSchema: Schema<Skills> = new mongoose.Schema(
       required: true,
       
     },
-    description: {
+    skillDescription: {
       type: String,
       required: true,
     },
