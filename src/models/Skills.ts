@@ -30,3 +30,4 @@ const SkillsModel =
   mongoose.model<Skills>("Skills", SkillsSchema);
 
 export default SkillsModel;
+ 

@@ -4,7 +4,7 @@ import * as z from "zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ApiResponse } from "@/types/ApiResponse";
 import axios, { AxiosError } from "axios";
@@ -39,54 +39,59 @@ const FormComponent: React.FC<FormComponentProps> = ({ formType }) => {
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     const onSubmit: SubmitHandler<FormValues> = async (data: FormValues) => {
-        setIsSubmitting(true)
-        console.log(data);
+        setIsSubmitting(true);
         try {
-            const formData = new FormData();
-            if (file != null) formData.append('file', file);
-console.log(file)
-            const imageResponse = await axios.post('/api/upload', formData);
-            console.log(imageResponse,imageResponse.data.results.url)
-            setFile(null)
-            setValue("images", imageResponse.data.results.url)
-           
-            if (formType === "volunteer") {
-                const response = await axios.post<ApiResponse>('/api/skills', data)
-
-                const skillId = response.data.data._id
-               
-                setValue("skills", skillId)
-
-                console.log(getValues("skills"))
+            let requestData
+            if (formType === 'volunteer') {
+                const formData = new FormData();
+                if (file) formData.append('file', file);
+    
+                const imageResponse = await axios.post('/api/upload', formData);
+                const imageUrl = imageResponse.data.results.url;
+    
+                const skillApiResponse = await axios.post<ApiResponse>('/api/skills', data);
+                const skillId = skillApiResponse.data.data._id;
+    
+                requestData = {
+                    ...data,
+                    location,
+                    role: 'Volunteer',
+                    skills: skillId,
+                    images: imageUrl,
+                };
+            } else {
+                const formData = new FormData();
+                if (file) formData.append('file', file);
+    
+                const imageResponse = await axios.post('/api/upload', formData);
+                const imageUrl = imageResponse.data.results.url;
+    
+                const categoryApiResponse = await axios.post<ApiResponse>('/api/opportunity-category', data);
+                const categoryId = categoryApiResponse.data.data._id;
+    
+                requestData = {
+                    ...data,
+                    location,
+                    role: 'Organization',
+                    category: categoryId,
+                    images: imageUrl,
+                };
             }
-            else{
-                const response = await axios.post<ApiResponse>('/api/opportunity-category', data)
-
-            const categoryId = response.data.data._id
-            console.log(categoryId)
-            setValue("category", categoryId)
-
-            console.log(getValues("category"))
-            }
-             const requestData = {
-                ...data,
-                location,
-                role: formType === 'volunteer' ? 'Volunteer' : 'Organization',
-            };
-            console.log(requestData)
-            // toast.success("Post added successfully");
+    
             const response = await axios.post<ApiResponse>('/api/volunteer-form', requestData);
-            console.log(response)
-            // router.replace(`/`)
-            setIsSubmitting(false)
+            console.log(response);
+            setIsSubmitting(false);
+            toast.success("Post added successfully");
+            router.replace("/")
         } catch (error) {
-            console.error("Error in adding post")
+            console.error("Error in adding post");
             const axiosError = error as AxiosError<ApiResponse>;
-            let errorMessage = axiosError.response?.data.message ?? ('There was a problem with your post. Please try again.');
-            toast.error(errorMessage)
-            setIsSubmitting(false)
+            const errorMessage = axiosError.response?.data.message ?? 'There was a problem with your post. Please try again.';
+            toast.error(errorMessage);
+            setIsSubmitting(false);
         }
     };
+
 
     console.log(errors)
 
@@ -166,7 +171,7 @@ console.log(file)
                 {formType === 'organization' && organizationFields}
                 <button type="submit" className='bg-black text-white py-1' disabled={isSubmitting}>Add Post</button>
             </form>
-            <LocationDetails location={location} setLocation={setLocation}/>
+            <LocationDetails location={location} setLocation={setLocation} />
         </>
     );
 };

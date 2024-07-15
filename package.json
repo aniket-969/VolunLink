@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.8.0",
+    "@mantine/hooks": "^7.11.2",
     "@react-email/components": "^0.0.20",
+    "@tanstack/react-query": "^5.51.1",
     "axios": "^1.7.2",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.2.0",
@@ -25,6 +27,7 @@
     "react-hook-form": "^7.52.1",
     "react-hot-toast": "^2.4.1",
     "react-icons": "^5.2.1",
+    "react-intersection-observer": "^9.13.0",
     "resend": "^3.4.0",
     "usehooks-ts": "^3.1.0",
     "zod": "^3.23.8"

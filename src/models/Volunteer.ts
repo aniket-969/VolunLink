@@ -34,7 +34,7 @@ const VolunteerFormSchema: Schema<VolunteerForm> = new mongoose.Schema(
   {
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "UserModel",
+      ref: "User",
       required: true,
     },
     title: {
@@ -107,6 +107,7 @@ const VolunteerFormSchema: Schema<VolunteerForm> = new mongoose.Schema(
 VolunteerFormSchema.index({createdBy:1});
 VolunteerFormSchema.index({"location.coordinates":"2dsphere"});
 VolunteerFormSchema.index({startDate:1,endDate:1});
+
 
 const VolunteerFormModel =
   (mongoose.models.VolunteerForm as mongoose.Model<VolunteerForm>) ||

@@ -35,6 +35,7 @@ export async function POST(request: Request) {
     } = body;
     
 console.log("This is skill",skills)
+console.log("This is category",category)
     const volunteerFormData = new VolunteerFormModel({
       title,
       description,

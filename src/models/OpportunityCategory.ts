@@ -5,7 +5,7 @@ export interface OpportunityCategory extends Document {
   categoryDescription:string;
 
 }
-
+ 
 const OpportunityCategorySchema: Schema<OpportunityCategory> = new mongoose.Schema(
   {
     categoryName: {
@@ -26,7 +26,7 @@ const OpportunityCategorySchema: Schema<OpportunityCategory> = new mongoose.Sche
 OpportunityCategorySchema.index({ categoryName: 1 });
 
 const OpportunityCategoryModel =
-  (mongoose.models.OpportunityCategory as mongoose.Model<OpportunityCategory>) ||
-  mongoose.model<OpportunityCategory>("OpportunityCategory", OpportunityCategorySchema);
+  
+ (mongoose.models.OpportunityCategory as mongoose.Model<OpportunityCategory>)||  mongoose.model<OpportunityCategory>("OpportunityCategory", OpportunityCategorySchema);
 
 export default OpportunityCategoryModel;

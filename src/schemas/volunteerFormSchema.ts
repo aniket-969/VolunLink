@@ -9,8 +9,8 @@ export const skillFormSchema = z.object({
     skillDescription: z.string().min(10), 
     availableFrom: z.string().date().optional(), 
     availableTill: z.string().date().optional(), 
-    images: z.string().optional(),
-    skills:z.string().optional()
+   
+    
 })
 
 export const opportunityCategoryFormSchema = z.object({
@@ -22,6 +22,6 @@ export const opportunityCategoryFormSchema = z.object({
     categoryDescription:z.string().min(10),
     availableFrom: z.string().date().optional(), 
     availableTill:z.string().date().optional(), 
-    images: z.string().optional(),
-    category:z.string().optional()
+
+   
 })
