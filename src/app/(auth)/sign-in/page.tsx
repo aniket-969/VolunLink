@@ -12,7 +12,7 @@ import { ApiResponse } from "@/types/ApiResponse";
 import axios, { AxiosError } from "axios";
 import { FaImagePortrait } from "react-icons/fa6";
 import { FaRegKeyboard } from "react-icons/fa6";
-import CustomInput from "@/components/CustomInput";
+import CustomInput from "@/components/ui/CustomInput";
 
 
 

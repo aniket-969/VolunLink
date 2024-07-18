@@ -14,7 +14,7 @@ import axios, { AxiosError } from "axios";
 import { FaEnvelope } from "react-icons/fa6";
 import { FaImagePortrait } from "react-icons/fa6";
 import { FaRegKeyboard } from "react-icons/fa6";
-import CustomInput from "@/components/CustomInput";
+import CustomInput from "@/components/ui/CustomInput";
 
 const SignUp = () => {
   const [username, setUsername] = useState('')

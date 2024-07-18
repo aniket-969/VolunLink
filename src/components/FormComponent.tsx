@@ -11,12 +11,12 @@ import axios, { AxiosError } from "axios";
 import { FaEnvelope, FaWrench } from "react-icons/fa6";
 import { FaImagePortrait } from "react-icons/fa6";
 import { FaRegKeyboard } from "react-icons/fa6";
-import CustomInput from "@/components/CustomInput";
+import CustomInput from "@/components/ui/CustomInput";
 import { skillFormSchema, opportunityCategoryFormSchema } from '@/schemas/volunteerFormSchema';
 import { FaPhoneAlt } from "react-icons/fa"
 import { MdKeyboardAlt } from "react-icons/md";
 import { FaCommentDots } from "react-icons/fa"
-import CustomInputWithIcon from './InputWithIcon';
+import CustomInputWithIcon from './ui/InputWithIcon';
 import { opportunityCategories, skills } from './../helpers/formConfig';
 import LocationDetails from "./Location";
 import { Location } from "@/models/Volunteer";
@@ -28,6 +28,7 @@ interface FormComponentProps {
 const FormComponent: React.FC<FormComponentProps> = ({ formType }) => {
 
     const router = useRouter();
+
     const [location, setLocation] = useState<Location | undefined>(undefined);
 
     const schema = formType === 'volunteer' ? skillFormSchema : opportunityCategoryFormSchema;
@@ -45,13 +46,13 @@ const FormComponent: React.FC<FormComponentProps> = ({ formType }) => {
             if (formType === 'volunteer') {
                 const formData = new FormData();
                 if (file) formData.append('file', file);
-    
+
                 const imageResponse = await axios.post('/api/upload', formData);
                 const imageUrl = imageResponse.data.results.url;
-    
+
                 const skillApiResponse = await axios.post<ApiResponse>('/api/skills', data);
                 const skillId = skillApiResponse.data.data._id;
-    
+
                 requestData = {
                     ...data,
                     location,
@@ -62,13 +63,13 @@ const FormComponent: React.FC<FormComponentProps> = ({ formType }) => {
             } else {
                 const formData = new FormData();
                 if (file) formData.append('file', file);
-    
+
                 const imageResponse = await axios.post('/api/upload', formData);
                 const imageUrl = imageResponse.data.results.url;
-    
+
                 const categoryApiResponse = await axios.post<ApiResponse>('/api/opportunity-category', data);
                 const categoryId = categoryApiResponse.data.data._id;
-    
+
                 requestData = {
                     ...data,
                     location,
@@ -77,7 +78,7 @@ const FormComponent: React.FC<FormComponentProps> = ({ formType }) => {
                     images: imageUrl,
                 };
             }
-    
+
             const response = await axios.post<ApiResponse>('/api/volunteer-form', requestData);
             console.log(response);
             setIsSubmitting(false);
@@ -91,10 +92,9 @@ const FormComponent: React.FC<FormComponentProps> = ({ formType }) => {
             setIsSubmitting(false);
         }
     };
-
-
+   
     console.log(errors)
-
+  
     const commonFields = (
         <>
             <CustomInputWithIcon register={register('title')} placeholder="Title" icon={FaCommentDots} />
@@ -172,6 +172,7 @@ const FormComponent: React.FC<FormComponentProps> = ({ formType }) => {
                 <button type="submit" className='bg-black text-white py-1' disabled={isSubmitting}>Add Post</button>
             </form>
             <LocationDetails location={location} setLocation={setLocation} />
+            
         </>
     );
 };

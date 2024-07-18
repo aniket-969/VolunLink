@@ -4,6 +4,7 @@ import "./globals.css";
 import { SessionContext } from "next-auth/react";
 import AuthProvider from './../context/AuthProvider';
 import { Toaster } from "react-hot-toast";
+import Navbar from "@/components/Navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,7 +21,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <AuthProvider>
-      <body className={inter.className}>{children}
+      <body className={inter.className}>
+        <Navbar/>
+        {children}
         <Toaster/>
       </body>
    </AuthProvider>

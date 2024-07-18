@@ -9,4 +9,33 @@
 }
 
 
+.pop{
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+}
 
+.pop1{
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+.image--cover {
+  /* width: 100px; */
+  /* height: 100px; */
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center right;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="datetime"],
+input[type="date"],
+input[type="month"], 
+input[type="time"],
+input[type="tel"] ,
+input[type="email"] {
+  outline: none;
+}
+
+.border-black{
+  border: 2px solid black;
+}

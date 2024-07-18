@@ -1,10 +1,9 @@
 'use client'
-import { fetchPosts } from '@/lib/actions/volunteers';
-import { FC } from 'react'
+import { fetchUserPosts } from '@/lib/actions/volunteers';
+import { FC} from 'react'
 import { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer'
 import Card from './ui/Card';
-import Filter from './Filter';
 
 interface Location {
     type: "Point";
@@ -58,15 +57,12 @@ const PostFeed: FC<PostFeedProps> = ({ initialPosts }) => {
     const [posts, setPosts] = useState(initialPosts)
     const [page, setPage] = useState(1)
     const [ref, inView] = useInView()
-    const[filter,setFilter] = useState('')
-
     console.log(posts)
     async function loadMorePosts() {
         const next = page + 1
-        const latitude =78
-        const longitude = 12
-        const newPosts = await fetchPosts(next, 5,filter,latitude,longitude)
-
+        const userId ="66993f77f33a4d5326a3c6f2"
+        const newPosts = await fetchUserPosts(next, 5,userId)
+       
         if (newPosts?.length) {
             setPage(next)
             setPosts((prev) => [...prev, ...newPosts])
@@ -80,34 +76,18 @@ const PostFeed: FC<PostFeedProps> = ({ initialPosts }) => {
         }
     }, [inView])
 
-    useEffect(()=>{ 
-        console.log(filter)
-     async function fetchFilteredPosts(){
-        const latitude = 12.9716
-        const longitude =  77.5946
-       const filteredPosts = await fetchPosts(1,5,filter,latitude,longitude)
-       console.log(filteredPosts)
-       setPosts(filteredPosts)
-       setPage(1)
-     }
-     fetchFilteredPosts()
-    },[filter])
-
     return (
         <div>
-
-          <Filter filter={filter} setFilter={setFilter}/>
-
             <div className='flex flex-col gap-10'>
-                {
-                    posts?.map(post => (
+               {
+                posts?.map(post => (
 
-                        <Card post={post} key={post._id} />
+                   <Card post={post} key={post._id}/>
 
-                    ))
-                }
+                ))
+            }  
             </div>
-
+           
             <div
                 ref={ref}
                 className='col-span-1 mt-16 flex items-center justify-center sm:col-span-2 md:col-span-3 lg:col-span-4'

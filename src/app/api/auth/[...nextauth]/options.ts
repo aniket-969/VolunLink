@@ -45,11 +45,16 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user,trigger,session }) {
       if (user) {
         token._id = user._id?.toString(); 
         token.isVerified = user.isVerified;
         token.username = user.username
+      }
+      if(trigger ==="update"){
+        token.name = session.name;
+        token.username = session.username;
+        token.image = session.image;
       }
       return token;
     },
@@ -59,7 +64,15 @@ export const authOptions: NextAuthOptions = {
         session.user.isVerified = token.isVerified;
         session.user.username = token.username;
       }
-      return session;
+      return {
+        ...session,
+        user:{
+          ...session.user,
+          name:token.name,
+          image:token.image,
+          username:token.username
+        }
+      }
     },
   },
   session: {
