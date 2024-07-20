@@ -49,10 +49,11 @@ interface Post {
 }
 
 interface ProfileFeedProps {
-    initialPosts: Post[]
+    initialPosts: Post[];
+    userId:string;
 }
 
-const ProfileFeed: FC<ProfileFeedProps> = ({ initialPosts }) => {
+const ProfileFeed: FC<ProfileFeedProps> = ({ initialPosts,userId }) => {
 
     const [posts, setPosts] = useState(initialPosts)
     const [page, setPage] = useState(1)
@@ -61,7 +62,7 @@ const ProfileFeed: FC<ProfileFeedProps> = ({ initialPosts }) => {
 
     async function loadMorePosts() {
         const next = page + 1
-        const userId = "669966fa242ddcbbbbcfe25d"
+    
         const newPosts = await fetchUserPosts(next, 5, userId)
 
         if (newPosts?.length) {
@@ -72,7 +73,7 @@ const ProfileFeed: FC<ProfileFeedProps> = ({ initialPosts }) => {
     }
 
     async function loadPostsDeletion() {
-        const userId = "669966fa242ddcbbbbcfe25d"
+     
         const newPosts = await fetchUserPosts(1, 5, userId)
         if (newPosts?.length) {
             setPage(1)
@@ -99,7 +100,7 @@ const ProfileFeed: FC<ProfileFeedProps> = ({ initialPosts }) => {
     }, [inView])
 
     return (
-        <div>
+        <div  className="flex min-h-screen flex-col items-center justify-between p-2">
             <div className='flex flex-col gap-10'>
                 {
                     posts?.map(post => (
