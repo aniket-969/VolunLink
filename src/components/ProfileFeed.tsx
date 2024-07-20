@@ -1,9 +1,9 @@
 'use client'
-import { fetchUserPosts } from '@/lib/actions/volunteers';
-import { FC} from 'react'
+import { fetchUserPosts, deleteUserPost } from '@/lib/actions/volunteers';
+import { FC } from 'react'
 import { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer'
-import Card from './ui/Card';
+import ProfileCard from './ui/ProfileCard';
 
 interface Location {
     type: "Point";
@@ -48,27 +48,49 @@ interface Post {
     __v: number;
 }
 
-interface PostFeedProps {
+interface ProfileFeedProps {
     initialPosts: Post[]
 }
 
-const PostFeed: FC<PostFeedProps> = ({ initialPosts }) => {
+const ProfileFeed: FC<ProfileFeedProps> = ({ initialPosts }) => {
 
     const [posts, setPosts] = useState(initialPosts)
     const [page, setPage] = useState(1)
     const [ref, inView] = useInView()
     console.log(posts)
+
     async function loadMorePosts() {
         const next = page + 1
-        const userId ="66993f77f33a4d5326a3c6f2"
-        const newPosts = await fetchUserPosts(next, 5,userId)
-       
+        const userId = "669966fa242ddcbbbbcfe25d"
+        const newPosts = await fetchUserPosts(next, 5, userId)
+
         if (newPosts?.length) {
             setPage(next)
             setPosts((prev) => [...prev, ...newPosts])
 
         }
     }
+
+    async function loadPostsDeletion() {
+        const userId = "669966fa242ddcbbbbcfe25d"
+        const newPosts = await fetchUserPosts(1, 5, userId)
+        if (newPosts?.length) {
+            setPage(1)
+            setPosts(newPosts)
+
+        }
+    }
+
+    const handleDelete = async (postId: string) => {
+        console.log("deleting", postId)
+        const message = await deleteUserPost(postId)
+        console.log(message)
+        await loadPostsDeletion()
+
+
+    }
+
+  
 
     useEffect(() => {
         if (inView) {
@@ -79,15 +101,15 @@ const PostFeed: FC<PostFeedProps> = ({ initialPosts }) => {
     return (
         <div>
             <div className='flex flex-col gap-10'>
-               {
-                posts?.map(post => (
+                {
+                    posts?.map(post => (
 
-                   <Card post={post} key={post._id}/>
+                        <ProfileCard post={post} onDelete={handleDelete} key={post._id} />
 
-                ))
-            }  
+                    ))
+                }
             </div>
-           
+
             <div
                 ref={ref}
                 className='col-span-1 mt-16 flex items-center justify-center sm:col-span-2 md:col-span-3 lg:col-span-4'
@@ -114,4 +136,4 @@ const PostFeed: FC<PostFeedProps> = ({ initialPosts }) => {
     )
 }
 
-export default PostFeed
+export default ProfileFeed

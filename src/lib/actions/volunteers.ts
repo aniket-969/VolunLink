@@ -7,6 +7,8 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/api/auth/[...nextauth]/options"
 import mongoose from "mongoose"
 import { User } from "@/models/User";
+import VolunteerFormModel from "@/models/Volunteer"
+
 
 export async function fetchPosts(page = 1, limit = 5,filter:string="default",latitude?:number,longitude?:number) {
   const{posts} = await getPosts(page,limit,filter,latitude,longitude)
@@ -68,4 +70,26 @@ export async function updateUser({
     }
   }
 
-  
+export async function deleteUserPost(postId:string){
+ try {
+  dbConnect()
+  const session = await getServerSession(authOptions);
+  const _user: User = session?.user;
+ 
+  if (!session || !_user) {
+    throw new Error("user not authenticated")
+  }
+  const userId = new mongoose.Types.ObjectId(_user._id as string);
+ const result = await VolunteerFormModel.findByIdAndDelete(postId)
+if(!result) {
+  throw new Error("Post not found or already deleted");
+}
+const path = `/profile/1233jejr3`
+revalidatePath(path)
+revalidatePath('/')
+
+  return {message:"Post deleted successfully"}
+ } catch (error:any) {
+  throw new Error(`Failed to delete user: ${error.message}`);
+ }  
+}
